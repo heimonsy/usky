@@ -1,0 +1,6 @@
+/lumen.log
+/vendor
+.env
+/node_modules
+/.sass-cache
+resources/assets/bower/
