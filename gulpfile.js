@@ -83,7 +83,22 @@ gulp.task('rev-dev', function () {
     .pipe(gulp.dest('public/build'));
 });
 
+gulp.task('index-dev', function () {
+  var target = gulp.src('./resources/apps/regist/index.html');
+  // It's not necessary to read the files (will speed up things), we're only after their paths:
+  var sources = gulp.src(['build/js/main-*.js', 'build/css/main-*.css'], {read: false, cwd: './public'});
+  return target.pipe(inject(sources))
+    .pipe(gulp.dest('./public/regist/'));
+});
+
+gulp.task('index', ['rev'],  function () {
+     gulp.start('index-dev');
+});
+
 gulp.task('clean', function () {
+    gulp.src('public/regist/*')
+        .pipe(clean({force: true}));
+
     gulp.src('resources/assets/dist/*')
       .pipe(clean({force: true}));
     gulp.src('public/build/*')
@@ -95,7 +110,7 @@ gulp.task('develop', ['sass-dev', 'scripts-dev'], function () {
             .start("watch");
 });
 
-gulp.task('production', ['rev']);
+gulp.task('production', ['index']);
 
 gulp.task('watch', function () {
     watch('resources/assets/dist/css/*.css', function () {
@@ -109,6 +124,9 @@ gulp.task('watch', function () {
     });
     watch('resources/assets/sass/**/*.scss', function () {
          gulp.start('sass-dev');
+    });
+    watch('public/build/**/*', function () {
+         gulp.start('index-dev');
     });
 });
 
